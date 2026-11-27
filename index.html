@@ -245,7 +245,8 @@ const DB_NAME = "GrandTreeDB_v17_Clean";
                 if(ps?.length>0){ photoMeshGroup.clear(); particleSystem=particleSystem.filter(p=>p.type!=='PHOTO'); ps.forEach(i=>createPhotoTexture(i.data, i.id)); } 
                 
                 const ms=await loadMusicFromDB(); 
-                if(ms){ bgmAudio.src=URL.createObjectURL(ms); if(EXPORTED_DATA) { document.body.addEventListener('click', () => { if(!isMusicPlaying) toggleMusicPlay(); }, { once: true }); } updatePlayBtnUI(false); } 
+                if(ms){ bgmAudio.src=URL.createObjectURL(ms); if(EXPORTED_DATA) { document.body.addEventListener('click', () => { if(!isMusicPlaying) toggleMusicPlay(); }, { once: true }); } updatePlayBtnUI(false); }
+                else { bgmAudio.src="https://archive.org/download/JingleBells_903/jingle_bells_64kb.mp3"; updatePlayBtnUI(false); } 
             } catch(e){console.warn(e);}
             
             initMediaPipe(); 
@@ -276,7 +277,7 @@ const DB_NAME = "GrandTreeDB_v17_Clean";
         window.updateTextConfig=()=> { const k=document.getElementById('font-select').value, l1=document.getElementById('input-line1').value, l2=document.getElementById('input-line2').value, s=document.getElementById('slider-fontsize').value, c=document.getElementById('color-picker').value; localStorage.setItem('v16_text_config',JSON.stringify({fontKey:k,line1:l1,line2:l2,size:s,color:c})); applyTextConfig(k,l1,l2,s,c); };
         function applyTextConfig(k,l1,l2,s,c) { const st=FONT_STYLES[k]||FONT_STYLES['style1']; const t1=document.getElementById('display-line1'), t2=document.getElementById('display-line2'), ct=document.getElementById('title-container'); ct.style.fontFamily=st.font; t1.innerText=l1; t2.innerText=l2; t1.style.letterSpacing=st.spacing; t2.style.letterSpacing=st.spacing; t1.style.textShadow=st.shadow; t2.style.textShadow=st.shadow; t1.style.textTransform=st.transform; t2.style.textTransform=st.transform; t1.style.color=c; t2.style.color=c; const fk=(window.IS_MOBILE)?0.34:0.48; t1.style.fontSize=(fk*s)+"px"; t2.style.fontSize=(fk*s)+"px"; }
         
-        window.toggleMusicPlay=()=> { if(!bgmAudio.src) return alert("请先上传音乐"); if(isMusicPlaying){ bgmAudio.pause(); isMusicPlaying=false; } else { bgmAudio.play(); isMusicPlaying=true; } updatePlayBtnUI(isMusicPlaying); };
+        window.toggleMusicPlay=()=> { if(!bgmAudio.src) return alert("请先上传音乐"); if(isMusicPlaying){ bgmAudio.pause(); isMusicPlaying=false; } else { bgmAudio.play().catch(()=>{}); isMusicPlaying=true; } updatePlayBtnUI(isMusicPlaying); };
         window.replayMusic=()=> { if(!bgmAudio.src) return; bgmAudio.currentTime=0; bgmAudio.play(); isMusicPlaying=true; updatePlayBtnUI(true); };
         window.updateVolume=(v)=> { bgmAudio.volume=v/100; };
         function updatePlayBtnUI(p) { document.getElementById('play-btn').innerText = p ? "⏸" : "⏯"; }
